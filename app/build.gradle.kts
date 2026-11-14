@@ -23,3 +23,8 @@ android {
         jvmTarget = "17"
     }
 }
+
+dependencies {
+    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.documentfile:documentfile:1.0.1")
+}
