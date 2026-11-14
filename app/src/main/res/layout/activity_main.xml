@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quest Game Installer"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            android:text="Choose an APK, then choose its game data folder."
+            android:textSize="15sp" />
+        <Button
+            android:id="@+id/chooseApkButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Choose game APK" />
+        <TextView
+            android:id="@+id/apkInfoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="No APK selected" />
+        <Button
+            android:id="@+id/chooseSourceButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2. Choose data folder" />
+        <TextView
+            android:id="@+id/sourceInfoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="No data folder selected" />
+        <Button
+            android:id="@+id/installButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="3. Install APK" />
+        <Button
+            android:id="@+id/chooseDestinationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4. Choose writable destination" />
+        <TextView
+            android:id="@+id/destinationInfoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="No destination selected" />
+        <Button
+            android:id="@+id/copyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5. Copy data folder" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Android/Quest security note: Android 11 and newer restrict direct access to Android/data and Android/obb. This app only copies into destinations the system file picker allows. It does not bypass those restrictions."
+            android:textSize="13sp" />
+    </LinearLayout>
+</ScrollView>
