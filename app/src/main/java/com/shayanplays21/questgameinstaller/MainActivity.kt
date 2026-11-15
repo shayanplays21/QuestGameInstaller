@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.documentfile.provider.DocumentFile
-import androidx.documentfile.provider.DocumentFile
 import androidx.activity.result.contract.ActivityResultContracts
 import rikka.shizuku.Shizuku
 
@@ -266,7 +265,7 @@ class MainActivity : ComponentActivity() {
                 runShizukuCommand("mkdir -p ${shellQuote(destination)}")
 
                 val result = copySafFolderToShell(source, destination)
-                if (result.second == 0) {
+                if (result.first > 0) {
                     runOnUiThread {
                         status.text = "OBB transfer complete. Copied ${result.first} file(s) (${formatBytes(result.third)}) to Android/obb/$packageId."
                         toast("Game OBB folder copied successfully.")
