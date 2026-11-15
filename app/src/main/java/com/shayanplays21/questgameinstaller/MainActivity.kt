@@ -346,7 +346,7 @@ class MainActivity : ComponentActivity() {
                 throw IllegalStateException("Shizuku shell command failed (exit $exitCode): $command")
             }
         } finally {
-            if (remote.alive()) remote.destroy()
+            if (remote.isAlive) remote.destroy()
         }
     }
 
