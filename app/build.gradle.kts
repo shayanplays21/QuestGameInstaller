@@ -11,8 +11,8 @@ android {
         applicationId = "com.shayanplays21.questgameinstaller"
         minSdk = 26
         targetSdk = 32
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     compileOptions {
@@ -27,4 +27,8 @@ android {
 dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.documentfile:documentfile:1.0.1")
+
+    // Shizuku API + provider are required for Binder discovery and permission requests.
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
 }
