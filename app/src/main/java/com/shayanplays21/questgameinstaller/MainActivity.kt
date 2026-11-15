@@ -9,19 +9,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.documentfile.provider.DocumentFile
 import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
     private var apkUri: Uri? = null
     private var sourceTreeUri: Uri? = null
-    private var destinationTreeUri: Uri? = null
     private var detectedPackage: String? = null
 
     private lateinit var status: TextView
     private lateinit var apkInfo: TextView
     private lateinit var sourceInfo: TextView
-    private lateinit var destinationInfo: TextView
     private lateinit var shizukuStatus: TextView
     private lateinit var shizukuDetail: TextView
 
@@ -64,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     "Could not read package information from this APK."
                 }
-                status.text = "APK selected. Choose the game's data folder."
+                status.text = "APK selected. Choose the game OBB folder."
             } catch (e: Exception) {
                 apkInfo.text = "Could not inspect APK: ${e.message}"
             }
@@ -81,19 +78,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val destinationPicker = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-        if (uri != null) {
-            contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
-            destinationTreeUri = uri
-            val folder = DocumentFile.fromTreeUri(this, uri)
-            destinationInfo.text = "Destination folder\n${folder?.name ?: "Selected folder"}"
-            status.text = "Destination selected."
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -101,7 +85,6 @@ class MainActivity : ComponentActivity() {
         status = findViewById(R.id.statusText)
         apkInfo = findViewById(R.id.apkInfoText)
         sourceInfo = findViewById(R.id.sourceInfoText)
-        destinationInfo = findViewById(R.id.destinationInfoText)
         shizukuStatus = findViewById(R.id.shizukuStatusText)
         shizukuDetail = findViewById(R.id.shizukuDetailText)
 
@@ -117,9 +100,6 @@ class MainActivity : ComponentActivity() {
         }
         findViewById<Button>(R.id.chooseSourceButton).setOnClickListener {
             sourcePicker.launch(null)
-        }
-        findViewById<Button>(R.id.chooseDestinationButton).setOnClickListener {
-            destinationPicker.launch(null)
         }
         findViewById<Button>(R.id.installButton).setOnClickListener { installSelectedApk() }
         findViewById<Button>(R.id.copyButton).setOnClickListener { copySelectedFolder() }
@@ -258,30 +238,18 @@ class MainActivity : ComponentActivity() {
 
     private fun copySelectedFolder() {
         if (!requireShizukuPermission()) return
-        val sourceUri = sourceTreeUri
-        val destinationUri = destinationTreeUri
-        if (sourceUri == null || destinationUri == null) {
-            toast("Choose both a source folder and a destination.")
+        val packageId = detectedPackage
+        if (packageId.isNullOrBlank()) {
+            toast("Select a valid APK first so its package ID can be detected.")
             return
         }
-        try {
-            val source = DocumentFile.fromTreeUri(this, sourceUri)
-                ?: throw IllegalStateException("Cannot open source folder")
-            val destination = DocumentFile.fromTreeUri(this, destinationUri)
-                ?: throw IllegalStateException("Cannot open destination folder")
-            val folderName = source.name ?: "GameData"
-            val target = destination.findFile(folderName)
-                ?: destination.createDirectory(folderName)
-                ?: throw IllegalStateException("Cannot create destination folder")
-            copyChildren(source, target)
-            status.text = "Copy complete: $folderName"
-            toast("Game data copied.")
-        } catch (e: Exception) {
-            status.text = "Copy failed: ${e.message}"
-            toast("Copy failed: ${e.message}")
+        if (sourceTreeUri == null) {
+            toast("Select the game OBB folder first.")
+            return
         }
+        status.text = "Fixed destination: Android/obb/" + packageId + ". The privileged SAF-to-OBB transfer engine is not implemented yet."
+        toast("OBB destination detected. Privileged folder transfer is not ready in this build.")
     }
-
     private fun copyChildren(source: DocumentFile, destination: DocumentFile) {
         for (child in source.listFiles()) {
             if (child.isDirectory) {
