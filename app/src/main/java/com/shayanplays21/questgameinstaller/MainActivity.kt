@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.ParcelFileDescriptor
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -313,8 +312,7 @@ class MainActivity : ComponentActivity() {
                         null
                     )
                     try {
-                        val output = ParcelFileDescriptor.AutoCloseOutputStream(remote.outputStream)
-                        output.use { shellOutput ->
+                        remote.outputStream.use { shellOutput ->
                             val input = contentResolver.openInputStream(child.uri)
                                 ?: throw IllegalStateException("Cannot read source file: $name")
                             input.use { sourceInput ->
@@ -346,7 +344,7 @@ class MainActivity : ComponentActivity() {
     private fun runShizukuCommand(command: String) {
         val remote = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
         try {
-            ParcelFileDescriptor.AutoCloseOutputStream(remote.outputStream).close()
+            remote.outputStream.close()
             val exitCode = remote.waitFor()
             if (exitCode != 0) {
                 throw IllegalStateException("Shizuku shell command failed (exit $exitCode): $command")
