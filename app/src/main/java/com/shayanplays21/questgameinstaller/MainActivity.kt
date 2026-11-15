@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
         }
 
         try {
-            if (Shizuku.isPreV11) {
+            if (Shizuku.isPreV11()) {
                 shizukuStatus.text = "Unsupported Shizuku version"
                 shizukuDetail.text = "Update the Shizuku app to a version compatible with the current API."
                 return
