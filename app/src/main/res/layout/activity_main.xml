@@ -2,75 +2,221 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#0B1020"
     android:fillViewport="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QUEST TOOLS"
+            android:textColor="#8B9BFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.16" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Quest Game Installer"
-            android:textSize="26sp"
+            android:layout_marginTop="5dp"
+            android:text="Game Installer"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="18dp"
+            android:text="Install your APK and organize its game files."
+            android:textColor="#AAB4CC"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#171F35">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SHIZUKU CONNECTION"
+                android:textColor="#8B9BFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:id="@+id/shizukuStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Checking Shizuku..."
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/shizukuDetailText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:text="Shizuku must be installed, running, and authorized."
+                android:textColor="#AAB4CC"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/connectShizukuButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="#6577F5"
+                android:text="Connect to Shizuku"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="10dp"
+            android:text="01  •  GAME PACKAGE"
+            android:textColor="#8B9BFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:background="#171F35">
+
+            <Button
+                android:id="@+id/chooseApkButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="#293653"
+                android:text="Select APK file"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/apkInfoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="No APK selected"
+                android:textColor="#AAB4CC"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/installButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#6577F5"
+                android:text="Install game"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="10dp"
+            android:text="02  •  GAME DATA"
+            android:textColor="#8B9BFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:background="#171F35">
+
+            <Button
+                android:id="@+id/chooseSourceButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="#293653"
+                android:text="Select source data folder"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/sourceInfoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="No data folder selected"
+                android:textColor="#AAB4CC"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/chooseDestinationButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="#293653"
+                android:text="Select destination folder"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/destinationInfoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="10dp"
+                android:text="No destination selected"
+                android:textColor="#AAB4CC"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/copyButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="#6577F5"
+                android:text="Copy game data"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/statusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp"
-            android:text="Choose an APK, then choose its game data folder."
-            android:textSize="15sp" />
-        <Button
-            android:id="@+id/chooseApkButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1. Choose game APK" />
-        <TextView
-            android:id="@+id/apkInfoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="No APK selected" />
-        <Button
-            android:id="@+id/chooseSourceButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2. Choose data folder" />
-        <TextView
-            android:id="@+id/sourceInfoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="No data folder selected" />
-        <Button
-            android:id="@+id/installButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="3. Install APK" />
-        <Button
-            android:id="@+id/chooseDestinationButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="4. Choose writable destination" />
-        <TextView
-            android:id="@+id/destinationInfoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="No destination selected" />
-        <Button
-            android:id="@+id/copyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="5. Copy data folder" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Android/Quest security note: Android 11 and newer restrict direct access to Android/data and Android/obb. This app only copies into destinations the system file picker allows. It does not bypass those restrictions."
+            android:layout_marginTop="18dp"
+            android:padding="14dp"
+            android:background="#171F35"
+            android:text="Connect to Shizuku to get started."
+            android:textColor="#D7DEEF"
             android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="18dp"
+            android:text="Note: Shizuku must be started separately (wireless debugging or root) and permission granted to this app. This build adds the connection and permission gate; protected Android/data and Android/obb operations still need a dedicated privileged file-operation implementation."
+            android:textColor="#77839D"
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>
