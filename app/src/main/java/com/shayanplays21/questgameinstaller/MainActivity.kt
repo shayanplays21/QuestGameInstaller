@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.documentfile.provider.DocumentFile
 import androidx.activity.result.contract.ActivityResultContracts
 import rikka.shizuku.Shizuku
 
