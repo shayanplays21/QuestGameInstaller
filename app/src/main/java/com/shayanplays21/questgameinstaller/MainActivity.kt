@@ -4,10 +4,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.documentfile.provider.DocumentFile
 import androidx.documentfile.provider.DocumentFile
 import androidx.activity.result.contract.ActivityResultContracts
 import rikka.shizuku.Shizuku
@@ -239,41 +241,132 @@ class MainActivity : ComponentActivity() {
 
     private fun copySelectedFolder() {
         if (!requireShizukuPermission()) return
+
         val packageId = detectedPackage
-        if (packageId.isNullOrBlank()) {
+        if (packageId.isNullOrBlank() ||
+            !packageId.matches(Regex("[A-Za-z0-9_]+(\\.[A-Za-z0-9_]+)+"))) {
             toast("Select a valid APK first so its package ID can be detected.")
             return
         }
-        if (sourceTreeUri == null) {
+
+        val sourceUri = sourceTreeUri
+        if (sourceUri == null) {
             toast("Select the game OBB folder first.")
             return
         }
-        status.text = "Fixed destination: Android/obb/" + packageId + ". The privileged SAF-to-OBB transfer engine is not implemented yet."
-        toast("OBB destination detected. Privileged folder transfer is not ready in this build.")
+
+        findViewById<Button>(R.id.copyButton).isEnabled = false
+        status.text = "Preparing transfer to Android/obb/$packageId ..."
+
+        Thread {
+            try {
+                val source = DocumentFile.fromTreeUri(this, sourceUri)
+                    ?: throw IllegalStateException("Could not open the selected source folder.")
+                val destination = "/sdcard/Android/obb/$packageId"
+                runShizukuCommand("mkdir -p ${shellQuote(destination)}")
+
+                val result = copySafFolderToShell(source, destination)
+                if (result.second == 0) {
+                    runOnUiThread {
+                        status.text = "OBB transfer complete. Copied ${result.first} file(s) (${formatBytes(result.third)}) to Android/obb/$packageId."
+                        toast("Game OBB folder copied successfully.")
+                        findViewById<Button>(R.id.copyButton).isEnabled = true
+                    }
+                } else {
+                    throw IllegalStateException("The selected folder contains no files.")
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    status.text = "OBB transfer failed: ${e.message ?: "Unknown error"}"
+                    toast("OBB transfer failed.")
+                    findViewById<Button>(R.id.copyButton).isEnabled = true
+                }
+            }
+        }.start()
     }
-    private fun copyChildren(source: DocumentFile, destination: DocumentFile) {
-        for (child in source.listFiles()) {
-            if (child.isDirectory) {
-                val name = child.name ?: "Folder"
-                val targetDir = destination.findFile(name)
-                    ?: destination.createDirectory(name)
-                    ?: throw IllegalStateException("Cannot create folder: $name")
-                copyChildren(child, targetDir)
-            } else if (child.isFile) {
-                val name = child.name ?: "file"
-                val mime = child.type ?: "application/octet-stream"
-                val targetFile = destination.findFile(name)?.also { it.delete() }
-                    ?: destination.createFile(mime, name)
-                    ?: throw IllegalStateException("Cannot create file: $name")
-                contentResolver.openInputStream(child.uri).use { input ->
-                    if (input == null) throw IllegalStateException("Cannot read: $name")
-                    contentResolver.openOutputStream(targetFile.uri, "w").use { output ->
-                        if (output == null) throw IllegalStateException("Cannot write: $name")
-                        input.copyTo(output)
+
+    // Reads each SAF file in the app process and streams its bytes directly to a
+    // Shizuku shell process. No inaccessible app-private staging directory is used.
+    private fun copySafFolderToShell(
+        folder: DocumentFile,
+        destinationPath: String
+    ): Triple<Int, Int, Long> {
+        var fileCount = 0
+        var directoryCount = 0
+        var totalBytes = 0L
+
+        fun copyFolder(current: DocumentFile, currentDestination: String) {
+            for (child in current.listFiles()) {
+                val name = child.name ?: throw IllegalStateException("A source item has no name.")
+                if (name == "." || name == ".." || name.contains("/") || name.contains("\\\\")) {
+                    throw IllegalStateException("Unsafe file or folder name: $name")
+                }
+
+                val childDestination = "$currentDestination/$name"
+                if (child.isDirectory) {
+                    runShizukuCommand("mkdir -p ${shellQuote(childDestination)}")
+                    directoryCount++
+                    copyFolder(child, childDestination)
+                } else if (child.isFile) {
+                    val remote = Shizuku.newProcess(
+                        arrayOf("sh", "-c", "cat > ${shellQuote(childDestination)}"),
+                        null,
+                        null
+                    )
+                    try {
+                        val output = ParcelFileDescriptor.AutoCloseOutputStream(remote.outputStream)
+                        output.use { shellOutput ->
+                            val input = contentResolver.openInputStream(child.uri)
+                                ?: throw IllegalStateException("Cannot read source file: $name")
+                            input.use { sourceInput ->
+                                val buffer = ByteArray(64 * 1024)
+                                while (true) {
+                                    val read = sourceInput.read(buffer)
+                                    if (read < 0) break
+                                    shellOutput.write(buffer, 0, read)
+                                    totalBytes += read
+                                }
+                            }
+                        }
+                        val exitCode = remote.waitFor()
+                        if (exitCode != 0) {
+                            throw IllegalStateException("Shizuku could not write: $name (exit $exitCode)")
+                        }
+                        fileCount++
+                    } finally {
+                        if (remote.alive()) remote.destroy()
                     }
                 }
             }
         }
+
+        copyFolder(folder, destinationPath)
+        return Triple(fileCount, directoryCount, totalBytes)
+    }
+
+    private fun runShizukuCommand(command: String) {
+        val remote = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
+        try {
+            ParcelFileDescriptor.AutoCloseOutputStream(remote.outputStream).close()
+            val exitCode = remote.waitFor()
+            if (exitCode != 0) {
+                throw IllegalStateException("Shizuku shell command failed (exit $exitCode): $command")
+            }
+        } finally {
+            if (remote.alive()) remote.destroy()
+        }
+    }
+
+    private fun shellQuote(value: String): String =
+        "'" + value.replace("'", "'\\''") + "'"
+
+    private fun formatBytes(bytes: Long): String {
+        if (bytes < 1024) return "$bytes B"
+        val kb = bytes / 1024.0
+        if (kb < 1024) return String.format(java.util.Locale.US, "%.1f KB", kb)
+        val mb = kb / 1024.0
+        if (mb < 1024) return String.format(java.util.Locale.US, "%.1f MB", mb)
+        return String.format(java.util.Locale.US, "%.2f GB", mb / 1024.0)
     }
 
     private fun toast(message: String) =
