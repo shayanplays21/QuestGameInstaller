@@ -306,11 +306,7 @@ class MainActivity : ComponentActivity() {
                     directoryCount++
                     copyFolder(child, childDestination)
                 } else if (child.isFile) {
-                    val remote = Shizuku.newProcess(
-                        arrayOf("sh", "-c", "cat > ${shellQuote(childDestination)}"),
-                        null,
-                        null
-                    )
+                    val remote = startShizukuProcess(arrayOf("sh", "-c", "cat > ${shellQuote(childDestination)}"))
                     try {
                         remote.outputStream.use { shellOutput ->
                             val input = contentResolver.openInputStream(child.uri)
@@ -331,7 +327,7 @@ class MainActivity : ComponentActivity() {
                         }
                         fileCount++
                     } finally {
-                        if (remote.alive()) remote.destroy()
+                        if (remote.isAlive) remote.destroy()
                     }
                 }
             }
@@ -342,7 +338,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun runShizukuCommand(command: String) {
-        val remote = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
+        val remote = startShizukuProcess(arrayOf("sh", "-c", command))
         try {
             remote.outputStream.close()
             val exitCode = remote.waitFor()
@@ -352,6 +348,20 @@ class MainActivity : ComponentActivity() {
         } finally {
             if (remote.alive()) remote.destroy()
         }
+    }
+
+    // Shizuku API 13.1.5 exposes newProcess as private even though it is
+    // documented for legacy su-style process execution. Invoke that API
+    // reflectively so the project compiles against the published SDK.
+    private fun startShizukuProcess(command: Array<String>): Process {
+        val method = Shizuku::class.java.getDeclaredMethod(
+            "newProcess",
+            Array<String>::class.java,
+            Array<String>::class.java,
+            String::class.java
+        )
+        method.isAccessible = true
+        return method.invoke(null, command, null, null) as Process
     }
 
     private fun shellQuote(value: String): String =
