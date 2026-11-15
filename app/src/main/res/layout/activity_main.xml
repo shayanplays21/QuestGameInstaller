@@ -206,7 +206,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="18dp"
-            android:text="Note: Shizuku must be started separately (wireless debugging or root) and permission granted to this app. The destination is fixed to Android/obb/<package ID>. Shizuku authorization is required for the privileged copy operation."
+            android:text="Note: Shizuku must be started separately (wireless debugging or root) and permission granted to this app. The destination is fixed to Android/obb/&lt;package ID&gt;. Shizuku authorization is required for the privileged copy operation."
             android:textColor="#77839D"
             android:textSize="12sp" />
     </LinearLayout>
