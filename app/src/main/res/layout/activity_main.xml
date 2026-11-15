@@ -137,7 +137,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:layout_marginBottom="10dp"
-            android:text="02  •  GAME DATA"
+            android:text="02  •  GAME OBB FOLDER"
             android:textColor="#8B9BFF"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -155,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:backgroundTint="#293653"
-                android:text="Select source data folder"
+                android:text="Select game OBB folder"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />
 
@@ -165,26 +165,17 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="10dp"
-                android:text="No data folder selected"
+                android:text="No game OBB folder selected"
                 android:textColor="#AAB4CC"
                 android:textSize="13sp" />
 
-            <Button
-                android:id="@+id/chooseDestinationButton"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="#293653"
-                android:text="Select destination folder"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF" />
-
             <TextView
-                android:id="@+id/destinationInfoText"
+                android:id="@+id/obbDestinationText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:paddingBottom="10dp"
-                android:text="No destination selected"
+                android:paddingBottom="12dp"
+                android:text="Destination: Android/obb/ (package ID detected from APK)"
                 android:textColor="#AAB4CC"
                 android:textSize="13sp" />
 
@@ -193,7 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:backgroundTint="#6577F5"
-                android:text="Copy game data"
+                android:text="Copy to Android/obb"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
@@ -215,7 +206,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="18dp"
-            android:text="Note: Shizuku must be started separately (wireless debugging or root) and permission granted to this app. This build adds the connection and permission gate; protected Android/data and Android/obb operations still need a dedicated privileged file-operation implementation."
+            android:text="Note: Shizuku must be started separately (wireless debugging or root) and permission granted to this app. The destination is fixed to Android/obb/<package ID>. Shizuku authorization is required for the privileged copy operation."
             android:textColor="#77839D"
             android:textSize="12sp" />
     </LinearLayout>
